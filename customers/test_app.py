@@ -65,21 +65,28 @@ def test_update_customer(test_client, new_customer):
     assert response.status_code == 404
 
 def test_get_customers(test_client, new_customer):
-    # Setup - Create a customer
+    # Setup for success case
     db.session.add(new_customer)
     db.session.commit()
-    # Success case
+
+    # Success case: Retrieve customers
     response = test_client.get('/customers')
     assert response.status_code == 200
     customers_data = response.get_json()
+    assert isinstance(customers_data, list)
     assert len(customers_data) == 1
     assert customers_data[0]['username'] == new_customer.username
 
-    # Error case: No customers found    
+    # Cleanup after success case
     db.session.delete(new_customer)
     db.session.commit()
+
+    # Error case: No customers found
     response = test_client.get('/customers')
     assert response.status_code == 404
+    error_message = response.get_json()
+    assert error_message['error'] == 'No customers found'
+
 
 def test_get_customer(test_client, new_customer):
     # Setup - Create a customer
