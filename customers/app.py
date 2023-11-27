@@ -133,5 +133,15 @@ def deduct_wallet(username):
     db.session.commit()
     return jsonify({'message': f'{amount} deducted from wallet', 'new_balance': customer.wallet}), 200
 
+#additional route (to check the balance of the customer)
+@app.route('/balance/<username>', methods=['GET'])
+def get_balance(username):
+    customer = Customer.query.get(username)
+    
+    if not customer:
+        return jsonify({'error': 'customer not found in record'}), 404
+
+    return jsonify({'username':customer.username, 'balance': customer.wallet}),200
+
 if __name__ == "__main__":
     app.run(debug=True)
