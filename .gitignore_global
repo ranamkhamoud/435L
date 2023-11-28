@@ -1,6 +1,31 @@
-*.venv
-.venv/
-.DS_Store
+# Byte-compiled / optimized / DLL files
 __pycache__/
-*.pyc
-*.pyo
+*.py[cod]
+*$py.class
+
+# Sphinx build outputs
+_build/
+_build_doctrees/
+_build_html/
+_build_latex/
+public/
+
+# PyBuilder
+target/
+
+
+# Environment files
+.env
+.venv
+env/
+venv/
+ENV/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
