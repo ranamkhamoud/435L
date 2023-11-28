@@ -32,9 +32,11 @@ class Sales(db.Model):
 with app.app_context():
     db.create_all()
 
-# URLs to other services
-inventory_service_url = "http://localhost:5001"  # URL to Inventory API
-customer_service_url = "http://127.0.0.1:5000"  # URL to Customer API
+# URL to Inventory API
+inventory_service_url = os.environ.get('INVENTORY_SERVICE_URL') or 'http://localhost:5002'  # URL to Inventory API
+
+  # URL to Customer API
+customer_service_url = os.environ.get('CUSTOMER_SERVICE_URL') or 'http://localhost:5001'  # URL to Customer API
 
 # App Routes
 @app.route('/')
@@ -118,6 +120,13 @@ def get_sales_history(username):
     else:
         return jsonify({'message': f'No sales history found for {username}'})
 
-
+# get customers
+@app.route('/customers', methods=['GET'])
+def get_customers():
+    response = requests.get(f'{customer_service_url}/customers')
+    if response.status_code == 200:
+        return jsonify({'Customers': response.json()})
+    else:
+        return jsonify({'error': 'Unable to fetch customers from Customer Service'}), 500
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=5000, debug=True)
