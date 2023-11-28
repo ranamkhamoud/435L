@@ -1,5 +1,5 @@
 import pytest
-from app import app, db, Customer  
+from app import app, db, Goods, Sales  
 from datetime import datetime
 
 @pytest.fixture(scope='module')
