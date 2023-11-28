@@ -22,11 +22,34 @@ class InventoryItem(db.Model):
 
     def __repr__(self):
         return f'<InventoryItem {self.name}>'
+    def to_dict(self):
+        return {
+            'name': self.name,
+            'category': self.category,
+            'price': self.price,
+            
+        }
 
 # Create the database tables
 with app.app_context():
     db.create_all()
 
+@app.route('/')
+def home():
+    return "Welcome to the Inventory Service API!"
+
+# API to fetch all goods
+@app.route('/inventory/goods', methods=['GET'])
+def get_goods():
+    goods = InventoryItem.query.all()
+    return jsonify({'Inventory': [good.to_dict() for good in goods]}), 200
+#API to fetch a good
+@app.route('/inventory/goods/<string:name>', methods=['GET'])
+def get_good(name):
+    good = InventoryItem.query.filter_by(name=name).first()
+    if not good:
+        return jsonify({'error': 'Item not found'}), 404
+    return jsonify(good.to_dict()), 200
 # API to add goods
 @app.route('/inventory/add', methods=['POST'])
 def add_goods():

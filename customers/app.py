@@ -156,12 +156,23 @@ def deduct_wallet(username):
 #additional route (to check the balance of the customer)
 @app.route('/balance/<username>', methods=['GET'])
 def get_balance(username):
-    customer = Customer.query.get(username)
-    
-    if not customer:
-        return jsonify({'error': 'customer not found in record'}), 404
+    try:
+        customer = Customer.query.get(username)
+        
+        if not customer:
+            return jsonify({'error': 'Customer not found'}), 404
 
-    return jsonify({'username':customer.username, 'balance': customer.wallet}),200
+        balance_info = {
+            'username': customer.username,
+            'balance': customer.wallet,
+        }
+
+        return jsonify(balance_info), 200
+
+    except Exception as e:
+        # Log the exception for debugging purposes
+        print(f"Error fetching customer balance: {e}")
+        return jsonify({'error': 'Internal server error'}), 500
 
 if __name__ == "__main__":
     app.run(debug=True)
