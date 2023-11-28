@@ -10,7 +10,7 @@ app = Flask(__name__)
 base_dir = os.path.abspath(os.path.dirname(__file__))
 db_path = os.path.join(base_dir, '..', 'db', 'database.db')
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 # Customer Model
@@ -46,21 +46,29 @@ def register_customer():
     if not all(field in data for field in required_fields):
         return jsonify({'error': 'All fields are required'}), 400
 
-    if db.session.get(Customer, data['username']):
+    try:
+        age = int(data['age'])
+        if age < 0:
+            return jsonify({'error': 'Age cannot be negative'}), 400
+    except ValueError:
+        return jsonify({'error': 'Invalid age'}), 400
+
+    try:
+        new_customer = Customer(
+            username=data['username'],
+            full_name=data['full_name'],
+            age=age,
+            address=data['address'],
+            gender=data['gender'],
+            marital_status=data['marital_status']
+        )
+        new_customer.set_password(data['password'])
+        db.session.add(new_customer)
+        db.session.commit()
+    except IntegrityError:
+        db.session.rollback()  # Rollback to save the session state
         return jsonify({'error': 'Username already exists'}), 409
 
-    new_customer = Customer(
-        username=data['username'],
-        full_name=data['full_name'],
-        age=data['age'],
-        address=data['address'],
-        gender=data['gender'],
-        marital_status=data['marital_status']
-    )
-    new_customer.set_password(data['password'])
-
-    db.session.add(new_customer)
-    db.session.commit()
     return jsonify({'message': 'Customer registered successfully'}), 201
 
 @app.route('/delete/<username>', methods=['DELETE'])
@@ -79,18 +87,18 @@ def update_customer(username):
         return jsonify({'error': 'Customer not found'}), 404
 
     data = request.json
-    if 'full_name' in data:
-        customer.full_name = data['full_name']
     if 'age' in data:
-        customer.age = data['age']
-    if 'address' in data:
-        customer.address = data['address']
-    if 'gender' in data:
-        customer.gender = data['gender']
-    if 'marital_status' in data:
-        customer.marital_status = data['marital_status']
-    if 'password' in data:
-        customer.set_password(data['password'])
+        try:
+            age = int(data['age'])
+            if age < 0:
+                raise ValueError
+            customer.age = age
+        except ValueError:
+            return jsonify({'error': 'Invalid age'}), 400
+
+    for key, value in data.items():
+        if hasattr(customer, key):
+            setattr(customer, key, value)
 
     db.session.commit()
     return jsonify({'message': 'Customer updated successfully'}), 200
@@ -98,6 +106,9 @@ def update_customer(username):
 @app.route('/customers', methods=['GET'])
 def get_all_customers():
     customers = Customer.query.all()
+    if not customers:
+        return jsonify({'error': 'No customers found'}), 404
+
     customer_list = [{'username': customer.username, 'full_name': customer.full_name, 'age': customer.age, 'address': customer.address, 'gender': customer.gender, 'marital_status': customer.marital_status, 'wallet': customer.wallet} for customer in customers]
     return jsonify(customer_list), 200
 
@@ -106,6 +117,7 @@ def get_customer(username):
     customer = db.session.get(Customer, username)
     if not customer:
         return jsonify({'error': 'Customer not found'}), 404
+
     customer_info = {'username': customer.username, 'full_name': customer.full_name, 'age': customer.age, 'address': customer.address, 'gender': customer.gender, 'marital_status': customer.marital_status, 'wallet': customer.wallet}
     return jsonify(customer_info), 200
 
@@ -115,10 +127,15 @@ def charge_wallet(username):
     if not customer:
         return jsonify({'error': 'Customer not found'}), 404
 
-    amount = request.json.get('amount', 0)
-    customer.wallet += amount
-    db.session.commit()
-    return jsonify({'message': f'{amount} added to wallet', 'new_balance': customer.wallet}), 200
+    try:
+        amount = float(request.json.get('amount', 0))
+        if amount <= 0:
+            raise ValueError
+        customer.wallet += amount
+        db.session.commit()
+        return jsonify({'message': f'{amount} added to wallet', 'new_balance': customer.wallet}), 200
+    except ValueError:
+        return jsonify({'error': 'Invalid amount'}), 400
 
 @app.route('/deduct_wallet/<username>', methods=['POST'])
 def deduct_wallet(username):
@@ -126,12 +143,15 @@ def deduct_wallet(username):
     if not customer:
         return jsonify({'error': 'Customer not found'}), 404
 
-    amount = request.json.get('amount', 0)
-    if customer.wallet < amount:
-        return jsonify({'error': 'Insufficient funds'}), 400
-    customer.wallet -= amount
-    db.session.commit()
-    return jsonify({'message': f'{amount} deducted from wallet', 'new_balance': customer.wallet}), 200
+    try:
+        amount = float(request.json.get('amount', 0))
+        if amount <= 0 or customer.wallet < amount:
+            raise ValueError
+        customer.wallet -= amount
+        db.session.commit()
+        return jsonify({'message': f'{amount} deducted from wallet', 'new_balance': customer.wallet}), 200
+    except ValueError:
+        return jsonify({'error': 'Invalid amount or insufficient funds'}), 400
 
 if __name__ == "__main__":
     app.run(debug=True)
