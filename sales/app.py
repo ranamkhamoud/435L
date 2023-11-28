@@ -1,3 +1,10 @@
+"""
+Sales Service API
+
+This module is a Flask application for a Sales Service API. Consists of functions for managing goods, sales transactions, and sales history.
+
+"""
+
 from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.exc import IntegrityError
@@ -16,11 +23,32 @@ db = SQLAlchemy(app)
 
 #define different classes for managing sales vs. managing goods
 class Goods(db.Model):
+    """
+    Goods Model 
+
+    Represents a list of the available goods in database
+
+    Attributes:
+    - name (str): the name of the good documented
+    - price (float): the price of the good
+    - totalAmount (int): the amount of the good available
+    """
     name = db.Column(db.String(200), unique = True, nullable = False)
     price = db.Column(db.Float, nullable=False)
     totalAmount = db.Column(db.Integer, nullable = False)
 
 class Sales(db.Model):
+    """
+    Sales Model 
+
+    Represents a sales transaction 
+
+    Attributes:
+    - username (str): the username of the customer that purchased the good
+    - price (float): the price of the sold good
+    - name (str): the name of the sold good
+    - time (datetime): timestap of the time the good was sold
+    """
     username = db.Column(db.String(255), nullable = False)
     price = db.Column(db.Float, nullable = False)
     name = db.Column(db.String(200), nullable = False)
