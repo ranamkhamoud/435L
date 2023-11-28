@@ -10,7 +10,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.exc import IntegrityError
 from datetime import datetime #to save the history of purchases by a customer
 import requests #for accessing other APIs
-
+import os
 app = Flask(__name__)
 
 base_dir = os.path.abspath(os.path.dirname(__file__))
