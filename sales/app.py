@@ -15,7 +15,7 @@ app = Flask(__name__)
 
 # Database Configuration
 base_dir = os.path.abspath(os.path.dirname(__file__))
-db_path = os.path.join(base_dir, '..', 'db', 'database.db')
+db_path = os.path.join(base_dir, 'database.db')
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 db = SQLAlchemy(app)
@@ -120,4 +120,4 @@ def get_sales_history(username):
 
 
 if __name__ == "__main__":
-    app.run(port=5002, debug=True)
+    app.run(host='0.0.0.0', port=5000)

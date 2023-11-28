@@ -6,7 +6,7 @@ app = Flask(__name__)
 
 # Database Configuration for Inventory Service
 base_dir = os.path.abspath(os.path.dirname(__file__))
-db_path = os.path.join(base_dir, '..', 'db', 'database.db')
+db_path = os.path.join(base_dir, 'database.db')
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
@@ -43,6 +43,7 @@ def home():
 def get_goods():
     goods = InventoryItem.query.all()
     return jsonify({'Inventory': [good.to_dict() for good in goods]}), 200
+
 #API to fetch a good
 @app.route('/inventory/goods/<string:name>', methods=['GET'])
 def get_good(name):
@@ -50,6 +51,7 @@ def get_good(name):
     if not good:
         return jsonify({'error': 'Item not found'}), 404
     return jsonify(good.to_dict()), 200
+
 # API to add goods
 @app.route('/inventory/add', methods=['POST'])
 def add_goods():
@@ -104,4 +106,4 @@ def deduce_goods(item_id):
     return jsonify({'message': f'{amount} units deduced', 'new_stock_count': item.stock_count}), 200
 
 if __name__ == "__main__":
-    app.run(port=5001, debug=True)
+    app.run(host='0.0.0.0', port=5000)

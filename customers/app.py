@@ -8,7 +8,8 @@ app = Flask(__name__)
 
 # Database Configuration
 base_dir = os.path.abspath(os.path.dirname(__file__))
-db_path = os.path.join(base_dir, '..', 'db', 'database.db')
+# db_path = os.path.join(base_dir, '..', 'db', 'database.db')
+db_path = os.path.join(base_dir, 'database.db')
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
@@ -175,4 +176,5 @@ def get_balance(username):
         return jsonify({'error': 'Internal server error'}), 500
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000)
+
