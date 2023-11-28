@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Welcome to InventoryService’s documentation! &#8212; InventoryService  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=4f649999" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=039e1c02" />
+    <script src="_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="welcome-to-inventoryservice-s-documentation">
+<h1>Welcome to InventoryService’s documentation!<a class="headerlink" href="#welcome-to-inventoryservice-s-documentation" title="Link to this heading">¶</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+</section>
+<section id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Link to this heading">¶</a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</section>
+<section id="inventory-service-api">
+<h1>Inventory Service API<a class="headerlink" href="#inventory-service-api" title="Link to this heading">¶</a></h1>
+<p>This module is a Flask application for an Inventory Service API. It consists of functions for managing inventory items.</p>
+<section id="endpoints">
+<h2>Endpoints<a class="headerlink" href="#endpoints" title="Link to this heading">¶</a></h2>
+<ol class="arabic">
+<li><p><strong>Fetch All Goods</strong></p>
+<ul>
+<li><p><strong>URL:</strong> <cite>/inventory/goods</cite></p></li>
+<li><p><strong>Method:</strong> <cite>GET</cite></p></li>
+<li><p><strong>Description:</strong> Retrieve a list of all inventory items.</p></li>
+<li><p><strong>Example Response:</strong>
+<a href="#id1"><span class="problematic" id="id2">``</span></a><a href="#id3"><span class="problematic" id="id4">`</span></a>json
+{</p>
+<blockquote>
+<div><dl class="simple">
+<dt>“Inventory”: [</dt><dd><p>{“name”: “Item1”, “category”: “Category1”, “price”: 10.0, “stock_count”: 100},
+{“name”: “Item2”, “category”: “Category2”, “price”: 15.0, “stock_count”: 50}</p>
+</dd>
+</dl>
+<p>]</p>
+</div></blockquote>
+</li>
+</ul>
+</li>
+<li><p><strong>Fetch a Specific Good</strong></p>
+<ul class="simple">
+<li><p><strong>URL:</strong> <cite>/inventory/goods/{name}</cite></p></li>
+<li><p><strong>Method:</strong> <cite>GET</cite></p></li>
+<li><p><strong>Description:</strong> Retrieve details for a specific inventory item.</p></li>
+<li><p><strong>Example Response:</strong>
+<code class="docutils literal notranslate"><span class="pre">`json</span>
+<span class="pre">{&quot;name&quot;:</span> <span class="pre">&quot;Item1&quot;,</span> <span class="pre">&quot;category&quot;:</span> <span class="pre">&quot;Category1&quot;,</span> <span class="pre">&quot;price&quot;:</span> <span class="pre">10.0,</span> <span class="pre">&quot;stock_count&quot;:</span> <span class="pre">100}</span>
+<span class="pre">`</span></code></p></li>
+</ul>
+</li>
+<li><p><strong>Add Goods</strong></p>
+<ul>
+<li><p><strong>URL:</strong> <cite>/inventory/add</cite></p></li>
+<li><p><strong>Method:</strong> <cite>POST</cite></p></li>
+<li><p><strong>Description:</strong> Add a new inventory item.</p></li>
+<li><p><strong>Example Request:</strong>
+<a href="#id5"><span class="problematic" id="id6">``</span></a><a href="#id7"><span class="problematic" id="id8">`</span></a>json
+{</p>
+<blockquote>
+<div><p>“name”: “NewItem”,
+“category”: “NewCategory”,
+“price”: 20.0,
+“description”: “Description of the new item”,
+“stock_count”: 50</p>
+</div></blockquote>
+</li>
+<li><p><strong>Example Response:</strong>
+<code class="docutils literal notranslate"><span class="pre">`json</span>
+<span class="pre">{&quot;message&quot;:</span> <span class="pre">&quot;Item</span> <span class="pre">added</span> <span class="pre">successfully&quot;}</span>
+<span class="pre">`</span></code></p></li>
+</ul>
+</li>
+<li><p><strong>Update Goods</strong></p>
+<ul class="simple">
+<li><p><strong>URL:</strong> <cite>/inventory/update/{item_id}</cite></p></li>
+<li><p><strong>Method:</strong> <cite>PUT</cite></p></li>
+<li><p><strong>Description:</strong> Update details for a specific inventory item.</p></li>
+<li><p><strong>Example Request:</strong>
+<code class="docutils literal notranslate"><span class="pre">`json</span>
+<span class="pre">{&quot;price&quot;:</span> <span class="pre">25.0,</span> <span class="pre">&quot;stock_count&quot;:</span> <span class="pre">75}</span>
+<span class="pre">`</span></code></p></li>
+<li><p><strong>Example Response:</strong>
+<code class="docutils literal notranslate"><span class="pre">`json</span>
+<span class="pre">{&quot;message&quot;:</span> <span class="pre">&quot;Item</span> <span class="pre">updated</span> <span class="pre">successfully&quot;}</span>
+<span class="pre">`</span></code></p></li>
+</ul>
+</li>
+<li><p><strong>Deduce Goods</strong></p>
+<ul class="simple">
+<li><p><strong>URL:</strong> <cite>/inventory/deduce/{item_id}</cite></p></li>
+<li><p><strong>Method:</strong> <cite>POST</cite></p></li>
+<li><p><strong>Description:</strong> Deduce stock from a specific inventory item.</p></li>
+<li><p><strong>Example Request:</strong>
+<code class="docutils literal notranslate"><span class="pre">`json</span>
+<span class="pre">{&quot;amount&quot;:</span> <span class="pre">5}</span>
+<span class="pre">`</span></code></p></li>
+<li><p><strong>Example Response:</strong>
+<code class="docutils literal notranslate"><span class="pre">`json</span>
+<span class="pre">{&quot;message&quot;:</span> <span class="pre">&quot;5</span> <span class="pre">units</span> <span class="pre">deduced&quot;,</span> <span class="pre">&quot;new_stock_count&quot;:</span> <span class="pre">70}</span>
+<span class="pre">`</span></code></p></li>
+</ul>
+</li>
+</ol>
+</section>
+<section id="usage-instructions">
+<h2>Usage Instructions<a class="headerlink" href="#usage-instructions" title="Link to this heading">¶</a></h2>
+<ol class="arabic">
+<li><p><strong>Running the API:</strong></p>
+<p>To start the Inventory Service API, run the following command in the terminal:</p>
+<p><a href="#id9"><span class="problematic" id="id10">``</span></a><a href="#id11"><span class="problematic" id="id12">`</span></a>bash
+python app.py</p>
+</li>
+</ol>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="#">InventoryService</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="#">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2023, Jana.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.2.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="_sources/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
