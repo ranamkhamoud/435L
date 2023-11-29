@@ -17,7 +17,7 @@ Delve into the Inventory API to understand how it manages inventory items, inclu
 ### Sales API Documentation
 Discover how the Sales API handles sales transactions, retrieves sales history, and integrates with the Inventory and Customers APIs.
 
-[Access Sales API Documentation](http://127.0.0.1:5500/sales/docs/_build/html/index.html)
+[Access Sales API Documentation](http://127.0.0.1:5500/sales/_build/html/index.html)
 
 ---
 
