@@ -6,20 +6,6 @@
 Welcome to InventoryService's documentation!
 ============================================
 
-.. toctree::
-   :maxdepth: 2
-   :caption: Contents:
-
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
-
-
 Inventory Service API
 =====================
 
@@ -29,19 +15,20 @@ Endpoints
 ---------
 
 1. **Fetch All Goods**
-   
+
    - **URL:** `/inventory/goods`
    - **Method:** `GET`
    - **Description:** Retrieve a list of all inventory items.
    - **Example Response:**
-     ```json
-     {
-       "Inventory": [
-         {"name": "Item1", "category": "Category1", "price": 10.0, "stock_count": 100},
-         {"name": "Item2", "category": "Category2", "price": 15.0, "stock_count": 50}
-       ]
-     }
-     ```
+
+     .. code-block:: json
+
+        {
+          "Inventory": [
+            {"name": "Item1", "category": "Category1", "price": 10.0, "stock_count": 100},
+            {"name": "Item2", "category": "Category2", "price": 15.0, "stock_count": 50}
+          ]
+        }
 
 2. **Fetch a Specific Good**
 
@@ -49,9 +36,10 @@ Endpoints
    - **Method:** `GET`
    - **Description:** Retrieve details for a specific inventory item.
    - **Example Response:**
-     ```json
-     {"name": "Item1", "category": "Category1", "price": 10.0, "stock_count": 100}
-     ```
+
+     .. code-block:: json
+
+        {"name": "Item1", "category": "Category1", "price": 10.0, "stock_count": 100}
 
 3. **Add Goods**
 
@@ -59,19 +47,22 @@ Endpoints
    - **Method:** `POST`
    - **Description:** Add a new inventory item.
    - **Example Request:**
-     ```json
-     {
-       "name": "NewItem",
-       "category": "NewCategory",
-       "price": 20.0,
-       "description": "Description of the new item",
-       "stock_count": 50
-     }
-     ```
+
+     .. code-block:: json
+
+        {
+          "name": "NewItem",
+          "category": "NewCategory",
+          "price": 20.0,
+          "description": "Description of the new item",
+          "stock_count": 50
+        }
+
    - **Example Response:**
-     ```json
-     {"message": "Item added successfully"}
-     ```
+
+     .. code-block:: json
+
+        {"message": "Item added successfully"}
 
 4. **Update Goods**
 
@@ -79,13 +70,16 @@ Endpoints
    - **Method:** `PUT`
    - **Description:** Update details for a specific inventory item.
    - **Example Request:**
-     ```json
-     {"price": 25.0, "stock_count": 75}
-     ```
+
+     .. code-block:: json
+
+        {"price": 25.0, "stock_count": 75}
+
    - **Example Response:**
-     ```json
-     {"message": "Item updated successfully"}
-     ```
+
+     .. code-block:: json
+
+        {"message": "Item updated successfully"}
 
 5. **Deduce Goods**
 
@@ -93,20 +87,28 @@ Endpoints
    - **Method:** `POST`
    - **Description:** Deduce stock from a specific inventory item.
    - **Example Request:**
-     ```json
-     {"amount": 5}
-     ```
+
+     .. code-block:: json
+
+        {"amount": 5}
+
    - **Example Response:**
-     ```json
-     {"message": "5 units deduced", "new_stock_count": 70}
-     ```
 
-Usage Instructions
-------------------
+     .. code-block:: json
 
-1. **Running the API:**
+        {"message": "5 units deduced", "new_stock_count": 70}
 
-   To start the Inventory Service API, run the following command in the terminal:
+.. toctree::
+   :maxdepth: 2
+   :caption: Contents:
 
-   ```bash
-   python app.py
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`
+
+.. automodule:: inventory.app
+    :members:
+    :private-members:

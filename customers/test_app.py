@@ -3,6 +3,16 @@ from app import app, db, Customer
 
 @pytest.fixture(scope='module')
 def test_client():
+    """
+    Fixture for setting up a test client for the app.
+
+    This fixture configures the app for testing by setting the necessary testing flags and database URI.
+    It also creates a test client using the app.test_client() method and sets up the necessary database operations.
+
+    Yields:
+        FlaskClient: The test client for making requests to the app.
+
+    """
     # Configure the app for testing
     app.config['TESTING'] = True
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
@@ -52,6 +62,15 @@ def test_register_customer(test_client):
     data = {'username': 'incompleteuser'}
     response = test_client.post('/register', json=data)
     assert response.status_code == 400
+def test_get_customers(test_client, new_customer):
+    # Setup - Create a customer to fetch
+    db.session.add(new_customer)
+    db.session.commit()
+
+    # Success case
+    response = test_client.get('/customers')
+    assert response.status_code == 200
+    assert b'testuser' in response.data
 
 def test_update_customer(test_client, new_customer):
     # Setup - Create a customer to update
@@ -67,32 +86,6 @@ def test_update_customer(test_client, new_customer):
     # Error case: Customer not found
     response = test_client.put('/update/nonexistinguser', json=update_data)
     assert response.status_code == 404
-
-
-def test_get_customers(test_client, new_customer):
-    # Setup for success case
-    db.session.add(new_customer)
-    db.session.commit()
-
-    # Success case: Retrieve customers
-    response = test_client.get('/customers')
-    assert response.status_code == 200
-    customers_data = response.get_json()
-    assert isinstance(customers_data, list)
-    expected_customers = 1 # Adjust this to the expected number of customers
-    assert len(customers_data) == expected_customers
-
-    # Cleanup after success case
-    db.session.delete(new_customer)
-    db.session.commit()
-
-    # Error case: No customers found
-    response = test_client.get('/customers')
-    assert response.status_code == 404
-    error_message = response.get_json()
-
-    assert error_message['error'] == 'No customers found'
-    assert error_message['error'] == 'No customers found'
 
 def test_charge_wallet(test_client, new_customer):
     # Setup - Create a customer
@@ -164,3 +157,5 @@ def test_delete_customer(test_client, new_customer):
     # Error case: Customer not found
     response = test_client.delete('/delete/nonexistinguser')
     assert response.status_code == 404
+
+

@@ -16,6 +16,20 @@ db = SQLAlchemy(app)
 
 # Customer Model
 class Customer(db.Model):
+    """
+    Represents a customer in the database.
+
+    Attributes:
+        username (str): The username of the customer, serving as the primary key.
+        full_name (str): The full name of the customer.
+        password_hash (str): The hashed password of the customer.
+        age (int): The age of the customer.
+        address (str): The address of the customer.
+        gender (str): The gender of the customer.
+        marital_status (str): The marital status of the customer.
+        wallet (float): The wallet balance of the customer.
+    
+    """
     username = db.Column(db.String(80), primary_key=True, unique=True)
     full_name = db.Column(db.String(150), nullable=False)
     password_hash = db.Column(db.String(128))
@@ -26,9 +40,11 @@ class Customer(db.Model):
     wallet = db.Column(db.Float, default=0.0)
 
     def set_password(self, password):
+        """Sets the password of the customer."""
         self.password_hash = generate_password_hash(password)
 
     def __repr__(self):
+        """Returns the string representation of the customer."""
         return f'<Customer {self.username}>'
 
 # Create the database tables
@@ -38,10 +54,17 @@ with app.app_context():
 # Routes
 @app.route('/')
 def home():
+    """Returns a welcome message."""
     return "Welcome to the Customer Service API!"
 
 @app.route('/register', methods=['POST'])
 def register_customer():
+    """
+    Registers a new customer.
+
+    The customer details are obtained from the JSON request body.
+    Validates the required fields and age before creating the customer.
+    """
     data = request.json
     required_fields = ['username', 'full_name', 'password', 'age', 'address', 'gender', 'marital_status']
     if not all(field in data for field in required_fields):
@@ -74,6 +97,12 @@ def register_customer():
 
 @app.route('/delete/<username>', methods=['DELETE'])
 def delete_customer(username):
+    """
+    Deletes a customer.
+
+    Args:
+        username (str): The username of the customer to be deleted.
+    """
     customer = db.session.get(Customer, username)
     if not customer:
         return jsonify({'error': 'Customer not found'}), 404
@@ -83,6 +112,12 @@ def delete_customer(username):
 
 @app.route('/update/<username>', methods=['PUT'])
 def update_customer(username):
+    """
+    Updates a customer's information.
+
+    Args:
+        username (str): The username of the customer to be updated.
+    """
     customer = db.session.get(Customer, username)
     if not customer:
         return jsonify({'error': 'Customer not found'}), 404
@@ -106,7 +141,8 @@ def update_customer(username):
 
 @app.route('/customers', methods=['GET'])
 def get_all_customers():
-    customers = Customer.query.all()
+    """Returns a list of all customers."""
+    customers = db.session.query(Customer).all()
     if not customers:
         return jsonify({'error': 'No customers found'}), 404
 
@@ -115,6 +151,12 @@ def get_all_customers():
 
 @app.route('/customer/<username>', methods=['GET'])
 def get_customer(username):
+    """
+    Retrieves a single customer.
+
+    Args:
+        username (str): The username of the customer to be retrieved.
+    """
     customer = db.session.get(Customer, username)
     if not customer:
         return jsonify({'error': 'Customer not found'}), 404
@@ -124,6 +166,12 @@ def get_customer(username):
 
 @app.route('/charge_wallet/<username>', methods=['POST'])
 def charge_wallet(username):
+    """
+    Charges a customer's wallet.
+
+    Args:
+        username (str): The username of the customer whose wallet is to be charged.
+    """
     customer = db.session.get(Customer, username)
     if not customer:
         return jsonify({'error': 'Customer not found'}), 404
@@ -140,6 +188,13 @@ def charge_wallet(username):
 
 @app.route('/deduct_wallet/<username>', methods=['POST'])
 def deduct_wallet(username):
+    """
+        Deducts an amount from a customer's wallet.
+
+    Args:
+        username (str): The username of the customer whose wallet is to be deducted.
+    """
+
     customer = db.session.get(Customer, username)
     if not customer:
         return jsonify({'error': 'Customer not found'}), 404
@@ -156,24 +211,24 @@ def deduct_wallet(username):
 
 #additional route (to check the balance of the customer)
 @app.route('/balance/<username>', methods=['GET'])
+@app.route('/balance/<username>', methods=['GET'])
 def get_balance(username):
-    try:
-        customer = Customer.query.get(username)
-        
-        if not customer:
-            return jsonify({'error': 'Customer not found'}), 404
+    """
+    Retrieves the balance of a customer's wallet.
 
-        balance_info = {
-            'username': customer.username,
-            'balance': customer.wallet,
-        }
+    Args:
+        username (str): The username of the customer whose balance is to be retrieved.
+    """
+    customer = db.session.query(Customer).filter_by(username=username).first()
+    if not customer:
+        return jsonify({'error': 'Customer not found'}), 404
 
-        return jsonify(balance_info), 200
+    balance_info = {
+        'username': customer.username,
+        'balance': customer.wallet,
+    }
 
-    except Exception as e:
-        # Log the exception for debugging purposes
-        print(f"Error fetching customer balance: {e}")
-        return jsonify({'error': 'Internal server error'}), 500
+    return jsonify(balance_info), 200
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000)

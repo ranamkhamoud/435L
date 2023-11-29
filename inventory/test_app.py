@@ -24,6 +24,19 @@ def test_add_goods(client):
         'stock_count': 5
     })
     assert response.status_code == 201
+def test_get_goods(client):
+    response = client.get('/inventory/goods')
+    assert response.status_code == 200
+    assert response.json['Inventory'] == []
+    # Add a good first
+    item = InventoryItem(name='Laptop', category='Electronics', price=1000, description='High-end gaming laptop', stock_count=5)
+    db.session.add(item)
+    db.session.commit()
+
+    response = client.get('/inventory/goods')
+    assert response.status_code == 200
+    assert len(response.json['Inventory']) == 1
+    assert response.json['Inventory'][0]['name'] == 'Laptop'
 
 def test_update_goods(client):
     with client.application.app_context():
@@ -92,3 +105,10 @@ def test_inventory_item_representation(client):
 
         fetched_item = db.session.get(InventoryItem, item.id)
         assert str(fetched_item) == f'<InventoryItem {item.name}>'
+
+
+
+
+
+
+

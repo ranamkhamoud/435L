@@ -6,7 +6,6 @@ This module is a Flask application for a Sales Service API. Consists of function
 """
 from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.exc import IntegrityError
 from datetime import datetime
 import requests
 import os
@@ -22,6 +21,16 @@ db = SQLAlchemy(app)
 
 # Sales Model
 class Sales(db.Model):
+    """
+    Represents a sales transaction in the database.
+
+    Attributes:
+        id (int): Unique identifier for the sales transaction.
+        username (str): Username of the customer involved in the sale.
+        price (float): Total price of the sale.
+        name (str): Name of the item sold.
+        time (datetime): Timestamp of when the sale occurred.
+    """
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(255), nullable=False)
     price = db.Column(db.Float, nullable=False)
@@ -34,17 +43,23 @@ with app.app_context():
 
 # URL to Inventory API
 inventory_service_url = os.environ.get('INVENTORY_SERVICE_URL') or 'http://localhost:5002'  # URL to Inventory API
-
-  # URL to Customer API
+# URL to Customer API
 customer_service_url = os.environ.get('CUSTOMER_SERVICE_URL') or 'http://localhost:5001'  # URL to Customer API
 
 # App Routes
 @app.route('/')
 def home():
+    """Returns a welcome message."""
     return "Welcome to the Sales Service API!"
 
 @app.route('/display', methods=['GET'])
 def display_goods():
+    """
+    Fetches and displays goods from the Inventory Service.
+
+    Returns:
+        JSON: A list of goods along with their details fetched from the Inventory Service.
+    """
     response = requests.get(f'{inventory_service_url}/inventory/goods')
     if response.status_code == 200:
         return jsonify({'Goods': response.json()})
@@ -53,6 +68,15 @@ def display_goods():
 
 @app.route('/sale', methods=['POST'])
 def sale_transaction():
+    """
+    Handles the sales transaction.
+
+    Processes the sale of an item by checking its availability, confirming the customer's balance, and updating the sales history.
+
+    Returns:
+        JSON: A success message if the sale is successful or an error message otherwise.
+    """
+
     data = request.json
     good_name = data.get('name')
     customer_user = data.get('customer_user')
@@ -105,6 +129,16 @@ def sale_transaction():
 # additional route in case of sales history 
 @app.route('/sales-history/<username>', methods=['GET'])
 def get_sales_history(username):
+
+    """
+    Retrieves the sales history of a specific customer.
+
+    Args:
+        username (str): Username of the customer.
+
+    Returns:
+        JSON: A list of all sales transactions associated with the given username.
+    """
     history = Sales.query.filter_by(username=username).all()
 
     if history:
@@ -120,13 +154,6 @@ def get_sales_history(username):
     else:
         return jsonify({'message': f'No sales history found for {username}'})
 
-# get customers
-@app.route('/customers', methods=['GET'])
-def get_customers():
-    response = requests.get(f'{customer_service_url}/customers')
-    if response.status_code == 200:
-        return jsonify({'Customers': response.json()})
-    else:
-        return jsonify({'error': 'Unable to fetch customers from Customer Service'}), 500
+
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000, debug=True)
